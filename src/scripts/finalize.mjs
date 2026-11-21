@@ -18,7 +18,7 @@ const measure = (file, filter) => {
 };
 
 // 1차: 현재 음량 측정 → 2차: 측정값으로 정확히 맞춤(linear)
-const TARGET = 'I=-14:TP=-1:LRA=11';
+const TARGET = 'I=-14:TP=-1.5:LRA=11'; // AAC 변환 때 최고값이 조금 올라가므로 -1.5로 여유
 const a = measure(raw, `loudnorm=${TARGET}:print_format=json`);
 const filter = `loudnorm=${TARGET}:measured_I=${a.input_i}:measured_TP=${a.input_tp}:measured_LRA=${a.input_lra}:measured_thresh=${a.input_thresh}:offset=${a.target_offset}:linear=true`;
 const r = ff(['-v', 'error', '-y', '-i', raw, '-c:v', 'copy', '-af', filter, '-ar', '48000', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', out]);

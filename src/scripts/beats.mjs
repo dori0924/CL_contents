@@ -31,17 +31,25 @@ function onsetEnvelope(x) {
   const re = new Float64Array(N), im = new Float64Array(N);
   let prev = new Float64Array(N / 2);
   const env = new Float64Array(frames);
+  const low = new Float64Array(frames);
+  const LOW_BIN = Math.max(2, Math.round((120 * N) / 22050)); // 킥·베이스 대역
+  let prevLow = new Float64Array(N / 2);
   for (let f = 0; f < frames; f++) {
     for (let i = 0; i < N; i++) { re[i] = x[f * H + i] * win[i]; im[i] = 0; }
     fft(re, im);
     const cur = new Float64Array(N / 2);
-    let flux = 0;
+    let flux = 0, lflux = 0;
+    const curLow = new Float64Array(N / 2);
     for (let k = 1; k < N / 2; k++) {
-      cur[k] = Math.log1p(100 * Math.hypot(re[k], im[k]));
+      const mag = Math.hypot(re[k], im[k]);
+      cur[k] = Math.log1p(100 * mag);
       const d = cur[k] - prev[k];
       if (d > 0) flux += d;
+      if (k <= LOW_BIN) { curLow[k] = mag; const dl = mag - prevLow[k]; if (dl > 0) lflux += dl; }
     }
+    prevLow = curLow;
     env[f] = flux;
+    low[f] = lflux;
     prev = cur;
   }
   // 주변 평균을 빼서 큰 음량 변화 대신 '치는 순간'만 남긴다
@@ -53,7 +61,7 @@ function onsetEnvelope(x) {
     const cnt = Math.min(i + 1, 2 * w + 1);
     out[Math.max(0, i - w)] = Math.max(0, env[Math.max(0, i - w)] - sum / cnt);
   }
-  return out;
+  return {env: out, low};
 }
 
 const at = (e, t) => {
@@ -74,7 +82,7 @@ function bestPhase(env, period) {
 }
 
 export function detectBeats(x, sr) {
-  const env = onsetEnvelope(x);
+  const {env, low} = onsetEnvelope(x);
   const fps = sr / H;
   // 1) 대략적인 BPM: 자기상관(1~4배 주기) + 120 BPM 근처 선호
   let bpm = 120, best = -1;
@@ -95,13 +103,22 @@ export function detectBeats(x, sr) {
     if (r.score > fine.score) fine = {bpm: b, phase: r.phase, score: r.score};
   }
   const period = (60 * fps) / fine.bpm;
-  // 3) 첫 강박: 4박 중 가장 센 자리
-  let down = 0, dbest = -1;
-  for (let j = 0; j < 4; j++) {
+  // 3) 첫 강박: 4박 중 저음(킥·베이스, 120Hz 이하)이 가장 세게 들어오는 자리. 비슷하면(90% 이상) 노래가 시작되는 지점과 가까운 쪽
+  const scores = [0, 1, 2, 3].map((j) => {
     let s = 0;
-    for (let t = fine.phase + j * period; t < env.length; t += 4 * period) s += at(env, t);
-    if (s > dbest) { dbest = s; down = j; }
-  }
+    for (let t = fine.phase + j * period; t < env.length; t += 4 * period) s += at(low, t);
+    return s;
+  });
+  const maxScore = Math.max(...scores);
+  const thr = 0.2 * Math.max(...env);
+  const firstOnset = env.findIndex((v) => v > thr);
+  const firstBeatIdx = Math.max(0, Math.round((firstOnset - fine.phase) / period));
+  let down = scores.indexOf(maxScore), near = 99;
+  scores.forEach((sc, j) => {
+    if (sc < 0.9 * maxScore) return;
+    const dist = (((j - firstBeatIdx) % 4) + 4) % 4;
+    if (dist < near) { near = dist; down = j; }
+  });
   // 프레임 중심 보정(N/2)
   const offset = ((fine.phase + down * period) * H + N / 2) / sr;
   return {bpm: Math.round(fine.bpm * 100) / 100, offset: Math.round(offset * 1000) / 1000};

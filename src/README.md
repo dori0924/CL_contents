@@ -15,7 +15,7 @@ npm install
 ## 완성본 만들기
 
 1. 사진 → `assets/raw/photos/` (JPG/PNG, 이름 `YYYYMMDD_장면_번호.jpg`, 단체사진은 끝에 `_final`)
-2. 음악 1곡 → `assets/raw/music/` (mp3/wav/m4a)
+2. (선택) 음악 1곡 → `assets/raw/music/` (mp3/wav/m4a). 비워 두면 팀장이 편곡한 「징글벨」이 자동으로 만들어져 들어간다
 3. 실행:
 
 ```powershell
@@ -31,6 +31,7 @@ npm run make      # 사진·음악 준비 + 박자 분석 + 렌더 + 음량 맞�
 | `npm run media` | 사진 회전 보정·축소 → `public/photos/`, 음악 복사, 박자 분석 → `public/beats.json`. 사진 점검표를 출력한다 |
 | `npm run studio` | 브라우저 미리보기. 오른쪽 속성에서 `showSafeArea`를 켜면 쇼츠 안전 영역이 빨갛게 보인다 |
 | `npm run render` | 렌더 후 음량을 -14 LUFS로 맞춰 `output/christmas_2026.mp4` 저장 |
+| `npm run compose` | 「징글벨」 편곡(140 BPM, 1분 46초)을 `assets/raw/music/`에 만든다 |
 | `npm run sample` → `npm run media -- --sample` | 시험용 사진 36장·128 BPM 음악으로 동작 확인 |
 
 ## 고치는 곳: `settings.json`

@@ -6,8 +6,9 @@
     "media": "node scripts/prepare-media.mjs",
     "studio": "remotion studio index.ts",
     "render": "remotion render index.ts Christmas ../output/christmas_2026_raw.mp4 --codec h264 && node scripts/finalize.mjs",
-    "make": "npm run media && npm run render",
+    "make": "node scripts/ensure-music.mjs && npm run media && npm run render",
     "sample": "node scripts/make-sample-media.mjs",
+    "compose": "node scripts/compose-jingle.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

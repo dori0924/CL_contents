@@ -74,9 +74,12 @@ finalPhoto.group = 'final';
 fs.writeFileSync(path.join(pub, 'photos.json'), JSON.stringify({photos: [...others, ...memberPhotos, finalPhoto]}, null, 1));
 
 // ---------- 음악 ----------
-const music = fs.existsSync(musicDir) ? fs.readdirSync(musicDir).filter((f) => AUD.test(f)).sort() : [];
-if (!music.length) fail(`음악 파일이 없습니다: ${musicDir}  (mp3/wav/m4a 하나를 넣어 주세요)`);
-if (music.length > 1) console.warn(`[주의] 음악이 ${music.length}개입니다. 첫 번째 "${music[0]}"을 씁니다.`);
+// 감독이 넣은 곡이 있으면 그것을, 없으면 팀장이 작곡한 징글벨(npm run compose)을 쓴다
+const GENERATED = 'jingle_bells_family_mix.wav';
+const music = (fs.existsSync(musicDir) ? fs.readdirSync(musicDir).filter((f) => AUD.test(f)) : [])
+  .sort((a, b) => (a === GENERATED) - (b === GENERATED) || a.localeCompare(b));
+if (!music.length) fail(`음악 파일이 없습니다: ${musicDir}  (mp3/wav/m4a를 넣거나 npm run compose 로 징글벨을 만드세요)`);
+if (music.length > 1) console.warn(`[주의] 음악이 ${music.length}개입니다. "${music[0]}"을 씁니다.`);
 for (const f of fs.readdirSync(pub)) if (/^music\./.test(f)) fs.rmSync(path.join(pub, f));
 const ext = path.extname(music[0]).toLowerCase();
 fs.copyFileSync(path.join(musicDir, music[0]), path.join(pub, `music${ext}`));
