@@ -7,7 +7,8 @@ import type {Photo} from '../types';
 export const Polaroid: React.FC<{photo: Photo; width: number; label?: string | null; clip?: boolean; zoom?: number; focusY?: number}> = ({photo, width, label, clip = true, zoom = 1, focusY = 30}) => {
   const pad = width * 0.055;
   const inner = width - pad * 2;
-  const ih = photo.orientation === 'portrait' ? inner * 1.25 : inner * 0.75;
+  // 사진 원래 비율을 따르되 너무 길거나 납작하지 않게 (0.75~1.25)
+  const ih = inner * Math.min(1.25, Math.max(0.75, photo.h / photo.w));
   const text = label ?? photo.date;
   return (
     <div style={{width, background: '#FBF8F1', padding: pad, paddingBottom: pad * 3.2, boxShadow: '0 24px 60px rgba(0,0,0,0.45)', borderRadius: 6, position: 'relative'}}>

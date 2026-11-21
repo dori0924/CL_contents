@@ -2,12 +2,32 @@
   "_설명": "팀장·감독이 고치는 값은 모두 여기 있다. 고친 뒤 npm run make 하면 반영된다.",
   "title": "우리가족의 크리스마스",
   "year": "2026",
-  "groupTitles": { "g1": "올해 우리는", "g2": "함께 웃은 날", "members": "고마운 우리 가족" },
-  "finalText": ["Merry Christmas", "& Happy New Year"],
+  "groupTitles": {
+    "g1": "올해 우리는",
+    "g2": "함께 웃은 날",
+    "members": "고마운 우리 가족"
+  },
+  "finalText": [
+    "Merry Christmas",
+    "& Happy New Year"
+  ],
   "endingText": "From. 우리가족",
   "members": [],
   "maxPhotosPerMember": 3,
-  "bars": { "intro": 4, "collage": 8, "final": 4, "ending": 3 },
+  "bars": {
+    "intro": 4,
+    "collage": 8,
+    "final": 4,
+    "ending": 3
+  },
   "bpmOverride": null,
-  "offsetOverride": null
+  "offsetOverride": null,
+  "finalPhoto": {
+    "_설명": "단체사진 확대: zoom=[시작,끝] 배율, focusY=확대 중심 세로 위치(%). 사진 전체를 보이려면 [1,1.05]",
+    "zoom": [
+      1.0,
+      1.06
+    ],
+    "focusY": 50
+  }
 }
