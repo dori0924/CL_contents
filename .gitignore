@@ -7,3 +7,9 @@ assets/raw/**
 output/*
 !output/.gitkeep
 node_modules/
+# 영상 코드: 사진·음악·분석 결과는 개인 소재라 제외 (글꼴은 커밋)
+src/public/photos/
+src/public/music.*
+src/public/*.json
+src/.sample/
+src/_stills.mjs

@@ -1,0 +1,25 @@
+{
+  "name": "family-christmas-2026",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "media": "node scripts/prepare-media.mjs",
+    "studio": "remotion studio index.ts",
+    "render": "remotion render index.ts Christmas ../output/christmas_2026_raw.mp4 --codec h264 && node scripts/finalize.mjs",
+    "make": "npm run media && npm run render",
+    "sample": "node scripts/make-sample-media.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.545",
+    "@remotion/fonts": "^4.0.545",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.545",
+    "sharp": "0.34.3"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.8",
+    "typescript": "5.8.3"
+  }
+}
