@@ -34,6 +34,9 @@ export function buildTimeline(photos: Photo[], beats: Beats): Timeline {
     g2 = sample(g2, left - k1);
   }
 
+  // 사진이 노래보다 적으면 한 장을 2마디씩 보여 줘서 노래 끝까지 채운다
+  const per = g1.length + g2.length + mem.length > 0 && slots >= 2 * (g1.length + g2.length + mem.length) + 1 ? 2 : 1;
+
   const segs: Seg[] = [];
   const captions: Caption[] = [];
   const beatFrames = beat * FPS;
@@ -42,14 +45,14 @@ export function buildTimeline(photos: Photo[], beats: Beats): Timeline {
   segs.push({kind: 'intro', from: 0, dur: barAt(b.intro), beatFrames, firstBeat: f(beats.offset)});
   n = b.intro;
 
-  const group = (text: string, icon: Caption['icon'], startBar: number, endBar: number) => {
-    if (endBar > startBar) captions.push({text, icon, from: barAt(startBar), dur: barAt(endBar) - barAt(startBar)});
+  const group = (text: string, icon: Caption['icon'], startBar: number, endBar: number, top = false) => {
+    if (endBar > startBar) captions.push({text, icon, from: barAt(startBar), dur: barAt(endBar) - barAt(startBar), top});
   };
 
   let s = n;
   g1.forEach((photo, i) => {
-    segs.push({kind: 'hang', from: barAt(n), dur: barAt(n + 1) - barAt(n), photo, first: i === 0});
-    n += 1;
+    segs.push({kind: 'hang', from: barAt(n), dur: barAt(n + per) - barAt(n), photo, first: i === 0});
+    n += per;
   });
   group(SETTINGS.groupTitles.g1, 'tree', s, n);
 
@@ -57,19 +60,19 @@ export function buildTimeline(photos: Photo[], beats: Beats): Timeline {
   const giftAt = Math.floor(g2.length / 2);
   g2.forEach((photo, i) => {
     if (i === giftAt && g2.length >= 3) {
-      segs.push({kind: 'gift', from: barAt(n), dur: barAt(n + 2) - barAt(n), photo, beatFrames});
-      n += 2;
+      segs.push({kind: 'gift', from: barAt(n), dur: barAt(n + per + 1) - barAt(n), photo, beatFrames});
+      n += per + 1;
     } else {
-      segs.push({kind: 'full', from: barAt(n), dur: barAt(n + 1) - barAt(n), photo});
-      n += 1;
+      segs.push({kind: 'full', from: barAt(n), dur: barAt(n + per) - barAt(n), photo});
+      n += per;
     }
   });
-  group(SETTINGS.groupTitles.g2, 'sparkle', s, n);
+  group(SETTINGS.groupTitles.g2, 'sparkle', s, n, true); // 화면 가득한 사진은 아래쪽에 사람이 많아 제목을 위로
 
   s = n;
   mem.forEach((photo) => {
-    segs.push({kind: 'member', from: barAt(n), dur: barAt(n + 1) - barAt(n), photo});
-    n += 1;
+    segs.push({kind: 'member', from: barAt(n), dur: barAt(n + per) - barAt(n), photo});
+    n += per;
   });
   group(SETTINGS.groupTitles.members, 'heart', s, n);
 

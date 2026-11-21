@@ -8,7 +8,7 @@ const STRING_Y = 280;
 const Item: React.FC<{photo: Photo; t: number; drop: boolean}> = ({photo, t, drop}) => {
   const w = photo.orientation === 'portrait' ? 680 : 860;
   const tilt = (random(photo.src) - 0.5) * 6;
-  const swing = 9 * Math.sin(t / 5) * Math.exp(-t / 22) + tilt;
+  const swing = 9 * Math.sin(t / 5) * Math.exp(-t / 22) + 1.6 * Math.sin(t / 17) + tilt;
   const dy = drop ? interpolate(t, [0, 12], [-1100, 0], {extrapolateRight: 'clamp', easing: Easing.out(Easing.back(1.3))}) : 0;
   return (
     <AbsoluteFill>

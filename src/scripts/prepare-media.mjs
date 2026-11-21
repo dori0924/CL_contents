@@ -33,24 +33,35 @@ if (files.length < 8) fail(`사진이 ${files.length}장뿐입니다. 최소 8�
 fs.rmSync(path.join(pub, 'photos'), {recursive: true, force: true});
 fs.mkdirSync(path.join(pub, 'photos'), {recursive: true});
 
+// 찍은 날짜: 파일 이름(YYYYMMDD…)이 우선, 없으면 사진 속 EXIF 촬영일
+const exifDate = (meta) => {
+  const m = meta.exif?.toString('latin1').match(/(20\d\d):(\d\d):(\d\d) \d\d:\d\d:\d\d/);
+  return m ? `${m[1]}${m[2]}${m[3]}` : null;
+};
+const metas = [];
+for (const f of files) {
+  const meta = await sharp(path.join(photoDir, f), {failOn: 'none'}).metadata();
+  const fromName = f.match(/^(20\d\d)(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])(?!\d)/);
+  const ymd = fromName ? fromName.slice(1, 4).join('') : exifDate(meta);
+  metas.push({f, meta, ymd});
+}
+metas.sort((a, b) => (a.ymd ?? '99999999').localeCompare(b.ymd ?? '99999999') || a.f.localeCompare(b.f, 'ko'));
+
 const photos = [];
 const report = [];
-for (const [i, f] of files.entries()) {
+for (const [i, {f, meta, ymd}] of metas.entries()) {
   const out = `p${String(i + 1).padStart(3, '0')}.jpg`;
-  const src = sharp(path.join(photoDir, f), {failOn: 'none'});
-  const meta = await src.metadata();
-  const info = await src.rotate().resize({width: 1600, height: 1600, fit: 'inside', withoutEnlargement: true})
+  const info = await sharp(path.join(photoDir, f), {failOn: 'none'}).rotate().resize({width: 1600, height: 1600, fit: 'inside', withoutEnlargement: true})
     .jpeg({quality: 88, mozjpeg: true}).toFile(path.join(pub, 'photos', out));
   const long = Math.max(meta.width ?? 0, meta.height ?? 0);
-  const m = f.match(/^(\d{4})(\d{2})(\d{2})/);
   const member = settings.members.find((n) => n && f.includes(n)) ?? null;
   const orientation = info.height > info.width * 1.05 ? 'portrait' : 'landscape';
   photos.push({
     src: `photos/${out}`, w: info.width, h: info.height, orientation,
-    date: m ? `${m[1]}.${m[2]}.${m[3]}` : null,
+    date: ymd ? `${ymd.slice(0, 4)}.${ymd.slice(4, 6)}.${ymd.slice(6)}` : null,
     member, final: /_final/i.test(f),
   });
-  report.push({file: f, orientation, long, note: [long < 2000 ? '해상도 낮음' : '', m ? '' : '날짜 없는 이름'].filter(Boolean).join(', ')});
+  report.push({file: f, orientation, long, date: ymd ?? '-', note: [long < 2000 ? '해상도 낮음' : '', ymd ? '' : '날짜 모름'].filter(Boolean).join(', ')});
 }
 
 // 묶음 나누기 (brief/PHOTO_PLAN.md)

@@ -45,7 +45,7 @@ export const Christmas: React.FC<ChristmasProps> = ({timeline, showSafeArea}) =>
       })}
       {captions.map((c, i) => (
         <Sequence key={`c${i}`} from={c.from} durationInFrames={c.dur} name={`문구 ${c.text}`}>
-          <Caption text={c.text} icon={c.icon} dur={c.dur} />
+          <Caption text={c.text} icon={c.icon} dur={c.dur} top={c.top} />
         </Sequence>
       ))}
       <Snow opacity={0.85} />

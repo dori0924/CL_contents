@@ -21,6 +21,6 @@ export type Seg =
   | {kind: 'final'; from: number; dur: number; photo: Photo; barFrames: number}
   | {kind: 'ending'; from: number; dur: number};
 
-export type Caption = {text: string; icon: 'tree' | 'sparkle' | 'heart'; from: number; dur: number};
+export type Caption = {text: string; icon: 'tree' | 'sparkle' | 'heart'; from: number; dur: number; top?: boolean};
 
 export type Timeline = {segs: Seg[]; captions: Caption[]; total: number; beats: Beats; beatFrames: number};

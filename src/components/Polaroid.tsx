@@ -4,7 +4,7 @@ import {KO} from '../fonts';
 import type {Photo} from '../types';
 
 // 폴라로이드 틀. width는 틀 전체 폭. 아래 여백에 날짜(또는 label)를 손글씨처럼
-export const Polaroid: React.FC<{photo: Photo; width: number; label?: string | null; clip?: boolean}> = ({photo, width, label, clip = true}) => {
+export const Polaroid: React.FC<{photo: Photo; width: number; label?: string | null; clip?: boolean; zoom?: number; focusY?: number}> = ({photo, width, label, clip = true, zoom = 1, focusY = 30}) => {
   const pad = width * 0.055;
   const inner = width - pad * 2;
   const ih = photo.orientation === 'portrait' ? inner * 1.25 : inner * 0.75;
@@ -14,7 +14,9 @@ export const Polaroid: React.FC<{photo: Photo; width: number; label?: string | n
       {clip && (
         <div style={{position: 'absolute', top: -46, left: width / 2 - 20, width: 40, height: 84, borderRadius: 8, background: 'linear-gradient(90deg,#B07A45,#D9A66B,#B07A45)', boxShadow: '0 4px 8px rgba(0,0,0,0.35)'}} />
       )}
-      <Img src={staticFile(photo.src)} style={{width: inner, height: ih, objectFit: 'cover', objectPosition: '50% 30%', display: 'block'}} />
+      <div style={{width: inner, height: ih, overflow: 'hidden'}}>
+        <Img src={staticFile(photo.src)} style={{width: inner, height: ih, objectFit: 'cover', objectPosition: `50% ${focusY}%`, display: 'block', transform: `scale(${zoom})`, transformOrigin: `50% ${focusY}%`}} />
+      </div>
       {text && (
         <div style={{position: 'absolute', left: 0, right: 0, bottom: pad * 0.7, textAlign: 'center', fontFamily: KO, fontSize: width * 0.075, color: C.ink, opacity: 0.8}}>{text}</div>
       )}
