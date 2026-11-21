@@ -40,14 +40,15 @@ CL_contents/
 ├── brief/
 │   ├── BRIEF.md         ← 기획서 (무엇을, 왜, 얼마나)
 │   ├── STORYBOARD.md    ← 장면별 구성표
-│   ├── SCRIPT.md        ← 내레이션 대본
+│   ├── SCRIPT.md        ← 내레이션 대본·화면 문구
+│   ├── PHOTO_PLAN.md    ← 사진 영상의 묶음·배치 계획
 │   └── CREDITS.md       ← 음악·소재 출처
 ├── board/
 │   ├── TASKS.md         ← 작업판 (누가 무엇을, 상태)
 │   ├── HANDOFF_TEMPLATE.md
 │   └── handoffs/        ← 작업 완료 인계서
 ├── assets/
-│   ├── raw/             ← 가족 원본 (Git 제외): photos/ videos/ voice/
+│   ├── raw/             ← 가족 원본 (Git 제외): photos/ videos/ music/ voice/
 │   └── generated/       ← 팀 2 그래픽·썸네일, voice/(AI 음성)
 ├── src/                 ← 팀 1의 Remotion·스크립트 코드
 └── output/              ← 렌더 결과물 (Git 제외)
