@@ -26,4 +26,7 @@
   { "file": "20261224_가족_final.jpg", "group": "06" }
 ]
 ```
-`focus`는 확대할 때 중심(얼굴 위치): `center`, `top`, `left`, `right`.
+`focus`는 확대할 때 중심(얼굴 위치): `center`, `top`, `bottom`, `left`, `right`.
+`orientation`(`portrait`/`landscape`)은 팀 1이 사진 크기를 읽어 자동으로 넣는다. 세로 영상이므로 **세로 사진은 화면 가득, 가로 사진은 흐린 배경 위 가운데**에 놓는다.
+
+세로 영상에서는 세로로 찍은 사진이 더 크게 보인다. 묶음2와 단체사진은 세로 사진이 있으면 우선 쓴다.
