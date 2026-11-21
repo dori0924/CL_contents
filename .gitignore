@@ -1,0 +1,9 @@
+# 가족 원본 사진·영상·목소리는 개인정보라 Git에 올리지 않는다 (용량도 큼)
+assets/raw/**
+!assets/raw/**/
+!assets/raw/README.md
+!assets/raw/**/.gitkeep
+# 렌더 결과물
+output/*
+!output/.gitkeep
+node_modules/
