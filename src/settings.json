@@ -16,7 +16,7 @@
   "maxPhotosPerMember": 3,
   "bars": {
     "intro": 4,
-    "collage": 8,
+    "collage": 6,
     "final": 4,
     "ending": 3
   },
